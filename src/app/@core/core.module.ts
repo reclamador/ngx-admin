@@ -1,11 +1,6 @@
-import { AppConfigModule, APP_DI_CONFIG } from './../app-config.module';
-import {
-  ModuleWithProviders,
-  NgModule,
-  Optional,
-  SkipSelf,
-  Injectable
-} from '@angular/core';
+import { APIInterceptor } from './api-interceptor.service';
+import { AppConfigModule } from './../app-config.module';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   NbAuthModule,
@@ -18,14 +13,18 @@ import {
 } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { DataModule } from './data/data.module';
 import { AnalyticsService, StateService, LayoutService } from './utils';
-import { map } from 'rxjs/operators';
-import { HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  HttpResponse,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { getDeepFromObject } from '@nebular/auth/helpers';
 import { AuthGuard } from './auth-guard.service';
+
 import { WebStorageModule } from 'ngx-store';
 
 @Injectable()
@@ -49,7 +48,7 @@ export function getterHeader(
   options: NbPasswordAuthStrategyOptions
 ) {
   const username = res.body['username'];
-  sessionStorage.setItem('ngx_username', username);
+  localStorage.setItem('ngx_username', username);
   return `ApiKey ${username}:${getDeepFromObject(res.body, options.token.key)}`; // Hack
 }
 
@@ -59,42 +58,31 @@ export const NB_CORE_PROVIDERS = [
     strategies: [
       NbDummyAuthStrategy.setup({
         name: 'logout',
-        delay: 3000
+        delay: 2000
       }),
       NbPasswordAuthStrategy.setup({
         name: 'username',
-        baseEndpoint: APP_DI_CONFIG.API_URL + '/api2/v1',
+        baseEndpoint: `/api/`,
         token: {
           class: NbAuthSimpleToken,
           key: 'key',
           getter: getterHeader
         },
         login: {
-          endpoint: '/apikey/'
-        }
-        // logout: {
-        //   alwaysFail: false,
-        //   endpoint: '',
-        //   method: null,
-        //   redirect: {
-        //     success: '/',
-        //     failure: '/',
-        //   },
-        // }
+          endpoint: 'api2/v1/apikey/',
+        },
+        // logout: { }
       })
     ],
     forms: {
       login: {
-        strategy: 'username'
-        // socialLinks: socialLinks,
+        strategy: 'username',
+        redirectDelay: 1000
       },
       logout: {
         strategy: 'logout'
-        // socialLinks: socialLinks,
       },
-      register: {
-        // socialLinks: socialLinks,
-      },
+      register: {},
       validation: {
         email: {
           required: true,
@@ -131,8 +119,14 @@ export const NB_CORE_PROVIDERS = [
   },
   {
     provide: HTTP_INTERCEPTORS,
-    useClass: NbAuthSimpleInterceptor,
+    useClass: APIInterceptor,
     multi: true
+  },
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: NbAuthSimpleInterceptor,
+    multi: true,
+
   },
   AuthGuard,
   AnalyticsService,
