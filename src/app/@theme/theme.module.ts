@@ -2,7 +2,7 @@ import { RouterModule } from '@angular/router';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 import {
   NbActionsModule,
@@ -22,7 +22,9 @@ import {
   NbButtonModule,
   NbInputModule,
   NbProgressBarModule,
+  NbIconModule
 } from '@nebular/theme';
+
 
 import { NbSecurityModule } from '@nebular/security';
 import { NbAuthModule } from '@nebular/auth';
@@ -50,6 +52,8 @@ import { CORPORATE_THEME } from './styles/theme.corporate';
 const BASE_MODULES = [CommonModule, FormsModule, ReactiveFormsModule, RouterModule];
 
 const NB_MODULES = [
+  NbEvaIconsModule,
+
   NbCardModule,
   NbLayoutModule,
   NbTabsetModule,
@@ -62,13 +66,13 @@ const NB_MODULES = [
   NbCheckboxModule,
   NbPopoverModule,
   NbContextMenuModule,
-  NgbModule,
   NbSecurityModule, // *nbIsGranted directive
   NbAuthModule,
   NbButtonModule,
   NbAlertModule,
   NbInputModule,
   NbProgressBarModule,
+  NbIconModule
 ];
 
 const COMPONENTS = [
@@ -109,10 +113,11 @@ const NB_THEME_PROVIDERS = [
   entryComponents: [...ENTRY_COMPONENTS],
 })
 export class ThemeModule {
-  static forRoot(): ModuleWithProviders {
-    return <ModuleWithProviders>{
+  static forRoot(): ModuleWithProviders<ThemeModule> {
+    return {
       ngModule: ThemeModule,
       providers: [...NB_THEME_PROVIDERS],
     };
   }
 }
+

@@ -1,7 +1,7 @@
 @import '../@theme/styles/themes';
 
  @include nb-install-component() {
-  /deep/ router-outlet + * {
+  ::ng-deep router-outlet + * {
     display: block;
     animation: fade 1s;
 
@@ -22,7 +22,7 @@
   */
   $popover-border-width: calc(#{nb-theme(popover-arrow-size)} - 2px);
 
-   /deep/ nb-popover, /deep/ nb-datepicker-container {
+   ::ng-deep nb-popover, ::ng-deep nb-datepicker-container {
     .arrow {
       &::after {
         border-left-width: $popover-border-width;

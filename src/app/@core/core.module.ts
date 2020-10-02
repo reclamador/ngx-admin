@@ -9,7 +9,8 @@ import {
   NbDummyAuthStrategy,
   NbAuthService,
   NbPasswordAuthStrategyOptions,
-  NbAuthSimpleInterceptor
+  NbAuthSimpleInterceptor,
+  getDeepFromObject
 } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { Observable } from 'rxjs';
@@ -22,10 +23,8 @@ import {
   HttpResponse,
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
-import { getDeepFromObject } from '@nebular/auth/helpers';
 import { AuthGuard } from './auth-guard.service';
-
-import { WebStorageModule } from 'ngx-store';
+import { StorageModule } from '@ngx-pwa/local-storage';
 
 @Injectable()
 export class NbSimpleRoleProvider extends NbRoleProvider {
@@ -132,7 +131,7 @@ export const NB_CORE_PROVIDERS = [
   AnalyticsService,
   LayoutService,
   StateService,
-  WebStorageModule
+  StorageModule
 ];
 
 @NgModule({
@@ -145,8 +144,8 @@ export class CoreModule {
     throwIfAlreadyLoaded(parentModule, 'CoreModule');
   }
 
-  static forRoot(): ModuleWithProviders {
-    return <ModuleWithProviders>{
+  static forRoot(): ModuleWithProviders<CoreModule> {
+    return {
       ngModule: CoreModule,
       providers: [...NB_CORE_PROVIDERS]
     };
