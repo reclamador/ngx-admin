@@ -12,5 +12,15 @@ export const environment = {
   production: false,
   envName: 'dev',
   API_URL: 'http://localhost:8000',
-  ___PUBLIC_DSN___: ''
+  GRAPHQL_URL: 'http://localhost:8000/core-graphql',
+  ___PUBLIC_DSN___: '',
+  firebase: {
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: ''
+  }
 };

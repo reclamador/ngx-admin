@@ -16,6 +16,7 @@ import { ThemeModule } from './@theme/theme.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
 
 import { AppConfigModule } from './app-config.module';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,7 +29,8 @@ import { AppConfigModule } from './app-config.module';
     NgxPermissionsModule.forRoot(),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
-    AppConfigModule
+    AppConfigModule,
+    AuthModule
   ],
   bootstrap: [AppComponent],
   providers: [{ provide: APP_BASE_HREF, useValue: '/' }]

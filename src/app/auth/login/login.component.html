@@ -1,0 +1,89 @@
+<nb-auth-block>
+  <h1 class="form-text title title-logo">
+    <img src="assets/images/logo-reclamador.svg" class="logo" />
+  </h1>
+  <h2 class="form-text sub-title">Inicio de sesión</h2>
+  <form (ngSubmit)="login()" #form="ngForm" autocomplete="nope">
+    <nb-alert *ngIf="showMessages.error && errors?.length && !submitted" outline="danger">
+      <p class="alert-title"><b>Wow wow wow</b></p>
+      <ul class="alert-message-list">
+        <li *ngFor="let error of errors" class="alert-message">{{ error }}</li>
+      </ul>
+    </nb-alert>
+
+    <div class="form-control-group">
+      <input
+        nbInput
+        fullWidth
+        [(ngModel)]="user.username"
+        #username="ngModel"
+        name="username"
+        id="input-username"
+        pattern="^[a-zA-Z-.]*$"
+        placeholder="Usuario"
+        fieldSize="large"
+        autofocus
+        [status]="username.dirty ? (username.invalid ? 'danger' : 'success') : 'basic'"
+        [required]="getConfigValue('forms.validation.username.required')"
+        [attr.aria-invalid]="username.invalid && username.touched ? true : null"
+      />
+      <ng-container *ngIf="username.invalid && username.touched">
+        <p class="caption status-danger" *ngIf="username.errors?.required">
+          Nombre de usuario es obligatorio
+        </p>
+        <p class="caption status-danger" *ngIf="username.errors?.pattern">
+          El nombre de usuario no es correcto
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="form-control-group">
+      <input
+        nbInput
+        fullWidth
+        [(ngModel)]="user.password"
+        #password="ngModel"
+        name="password"
+        type="password"
+        id="input-password"
+        placeholder="Contraseña"
+        fieldSize="large"
+        [status]="password.dirty ? (password.invalid ? 'danger' : 'success') : 'basic'"
+        [required]="getConfigValue('forms.validation.password.required')"
+        [minlength]="getConfigValue('forms.validation.password.minLength')"
+        [maxlength]="getConfigValue('forms.validation.password.maxLength')"
+        [attr.aria-invalid]="password.invalid && password.touched ? true : null"
+      />
+
+      <ng-container *ngIf="password.invalid && password.touched">
+        <p class="caption status-danger" *ngIf="password.errors?.required">
+          Contraseña de usuario es obligatoria
+        </p>
+        <p
+          class="caption status-danger"
+          *ngIf="password.errors?.minlength || password.errors?.maxlength"
+        >
+          Contraseña debería contener desde
+          {{ getConfigValue('forms.validation.password.minLength') }} a
+          {{ getConfigValue('forms.validation.password.maxLength') }}
+          caracteres
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="form-group accept-group col-sm-12">
+      <!-- <a class="forgot-password" routerLink="../request-password">¿Olvidaste tu constraseña?</a> -->
+    </div>
+
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="submitted || !form.valid"
+      [class.btn-pulse]="submitted"
+    >
+      Acceder
+    </button>
+  </form>
+</nb-auth-block>

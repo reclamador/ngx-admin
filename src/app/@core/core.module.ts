@@ -10,7 +10,7 @@ import {
   NbAuthService,
   NbPasswordAuthStrategyOptions,
   NbAuthSimpleInterceptor,
-  getDeepFromObject
+  getDeepFromObject,
 } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { Observable } from 'rxjs';
@@ -19,12 +19,10 @@ import { map } from 'rxjs/operators';
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { DataModule } from './data/data.module';
 import { AnalyticsService, StateService, LayoutService } from './utils';
-import {
-  HttpResponse,
-  HTTP_INTERCEPTORS,
-} from '@angular/common/http';
+import { HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthGuard } from './auth-guard.service';
 import { StorageModule } from '@ngx-pwa/local-storage';
+import { GraphQLModule } from './graphql.module';
 
 @Injectable()
 export class NbSimpleRoleProvider extends NbRoleProvider {
@@ -57,7 +55,7 @@ export const NB_CORE_PROVIDERS = [
     strategies: [
       NbDummyAuthStrategy.setup({
         name: 'logout',
-        delay: 2000
+        delay: 2000,
       }),
       NbPasswordAuthStrategy.setup({
         name: 'username',
@@ -65,79 +63,78 @@ export const NB_CORE_PROVIDERS = [
         token: {
           class: NbAuthSimpleToken,
           key: 'key',
-          getter: getterHeader
+          getter: getterHeader,
         },
         login: {
           endpoint: 'api2/v1/apikey/',
         },
         // logout: { }
-      })
+      }),
     ],
     forms: {
       login: {
         strategy: 'username',
-        redirectDelay: 1000
+        redirectDelay: 1000,
       },
       logout: {
-        strategy: 'logout'
+        strategy: 'logout',
       },
       register: {},
       validation: {
         email: {
           required: true,
-          regexp: '(w+)'
-        }
-      }
-    }
+          regexp: '(w+)',
+        },
+      },
+    },
   }).providers,
 
   NbSecurityModule.forRoot({
     accessControl: {
       guest: {
         // view: ['dashboard'],
-        view: '*'
+        view: '*',
       },
       user: {
         parent: 'guest',
         create: '*',
         edit: '*',
-        remove: '*'
+        remove: '*',
       },
       admin: {
         parent: 'user',
         create: '*',
         edit: '*',
-        remove: '*'
-      }
-    }
+        remove: '*',
+      },
+    },
   }).providers,
 
   {
     provide: NbRoleProvider,
-    useClass: NbSimpleRoleProvider
+    useClass: NbSimpleRoleProvider,
   },
   {
     provide: HTTP_INTERCEPTORS,
     useClass: APIInterceptor,
-    multi: true
+    multi: true,
   },
   {
     provide: HTTP_INTERCEPTORS,
     useClass: NbAuthSimpleInterceptor,
     multi: true,
-
   },
   AuthGuard,
   AnalyticsService,
   LayoutService,
   StateService,
-  StorageModule
+  StorageModule,
 ];
 
 @NgModule({
-  imports: [CommonModule, AppConfigModule],
+  imports: [CommonModule, AppConfigModule, GraphQLModule],
   exports: [NbAuthModule],
-  declarations: []
+  declarations: [],
 })
 export class CoreModule {
   constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
@@ -147,7 +144,7 @@ export class CoreModule {
   static forRoot(): ModuleWithProviders<CoreModule> {
     return {
       ngModule: CoreModule,
-      providers: [...NB_CORE_PROVIDERS]
+      providers: [...NB_CORE_PROVIDERS],
     };
   }
 }
