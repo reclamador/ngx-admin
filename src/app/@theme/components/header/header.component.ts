@@ -10,7 +10,7 @@ import { LayoutService } from '../../../@core/utils/layout.service';
 @Component({
   selector: 'ngx-header',
   styleUrls: ['./header.component.scss'],
-  templateUrl: './header.component.html'
+  templateUrl: './header.component.html',
 })
 export class HeaderComponent implements OnInit {
   @Input() position = 'normal';
@@ -20,7 +20,10 @@ export class HeaderComponent implements OnInit {
   // VERSION = VERSION.version;
   VERSION = '';
 
-  userMenu = [{ title: 'Profile', link: 'pages/profile' }, { title: 'Log out', link: '/auth/logout' }];
+  userMenu = [
+    { title: 'Profile', link: 'pages/profile' },
+    { title: 'Log out', link: '/auth/logout' },
+  ];
 
   constructor(
     private sidebarService: NbSidebarService,

@@ -1,7 +1,6 @@
 import { ComposeWorker } from '../data/model/User';
 import { Injectable } from '@angular/core';
-import { Query, Mutation } from 'apollo-angular';
-import gql from 'graphql-tag';
+import { Query, Mutation, gql } from 'apollo-angular';
 import { IUser } from '../data/model/User';
 import { ErrorType } from '../graphql.module';
 

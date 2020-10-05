@@ -24,7 +24,7 @@ export const APP_DI_CONFIG: AppConfig = {
   ___PUBLIC_DSN___: environment.___PUBLIC_DSN___,
   API_URL: environment.API_URL,
   GRAPHQL_URL: environment.GRAPHQL_URL,
-  appTitle: 'Setup',
+  appTitle: 'MyApp',
   firebase: environment.firebase
 };
 

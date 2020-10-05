@@ -17,6 +17,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 
 import { AppConfigModule } from './app-config.module';
 import { AuthModule } from './auth/auth.module';
+import { NgxWebstorageModule } from 'ngx-webstorage';
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +26,8 @@ import { AuthModule } from './auth/auth.module';
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
+
+    NgxWebstorageModule.forRoot({ prefix: 'ngx', separator: '_' }),
 
     NgxPermissionsModule.forRoot(),
     CoreModule.forRoot(),

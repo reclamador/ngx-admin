@@ -1,10 +1,9 @@
-import { NgxPermissionsService } from 'ngx-permissions';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { flatMap, map, shareReplay, tap } from 'rxjs/operators';
-import { StorageMap } from '@ngx-pwa/local-storage';
-import { Router } from '@angular/router';
+import { mergeMap, map, shareReplay, tap } from 'rxjs/operators';
+import { UpdateUserGQL } from '../graphql/users-gql';
+import { IUser, IWorker } from './model/User';
 
 export interface User {
   date_joined: string;
@@ -42,71 +41,68 @@ export class UserService {
   entity = 'user';
   auxEntity = 'worker';
 
+  worker: Worker;
   private username = '';
+  // private APP_SERVICE = 'Setup';
+  user: IUser = null;
+  currentWorker$ = new BehaviorSubject<IWorker>(null);
 
   constructor(
     private http: HttpClient,
-    private storage: StorageMap,
-    private permissionsService: NgxPermissionsService,
-    private router: Router
+    // private getMyUserGQL: GetMyUserGQL,
+    private updateUserGQL: UpdateUserGQL
   ) {
-    this.storage.get('username').subscribe((data: string) => {
-      this.username = data;
-    });
+    this.username = localStorage.getItem('ngx_username');
+  }
+
+  getUserData$(username: string): Observable<User> {
+    return this.http.get<User>(`/api/api2/v1/user/?username=${username}`).pipe(
+      map((response: any) => {
+        return response.objects[0];
+      })
+    );
+  }
+
+  getWorker$(workerId: number): Observable<Worker> {
+    return this.http.get<Worker>(`/api/api2/v1/worker/${workerId}/`);
   }
 
   getUser$(): Observable<Worker> {
-    if (!this.username) {
-      this.router.navigate(['auth/login']);
-      return new Observable<any>();
+    if (this.worker) {
+      return of(this.worker);
     }
-    const PermissionsReq$ = (workerId: number) => {
-      this.http
-        .get<any>(`/api/profiles/api/users/${workerId}/crm-permissions/`)
-        .subscribe((perm: Permissions) => {
-          this.setAll(perm);
-        });
-    };
+    if (!this.username) return;
 
-    const WorkerReq$ = (workerId: number) => {
-      return this.http.get<Worker>(`/api2/v1/worker/${workerId}/`);
-    };
-    const UserReq$ = this.http.get<User>(`/api2/v1/user/?username=${this.username}`).pipe(
-      map((response: any) => response.objects[0]),
-      tap(user => PermissionsReq$(user.id)) // Side-effect - Set permissions
-      // shareReplay(1)
-    );
-
-    return UserReq$.pipe(
-      flatMap((user: User) => WorkerReq$(user.worker)),
+    return this.getUserData$(this.username).pipe(
+      mergeMap((user: User) => this.getWorker$(user.worker)),
+      map((worker) => (this.worker = worker)),
       shareReplay(1)
     );
+
+    // GET user data using GQL
+    //   return this.getMyUserGQL.watch({ app: this.APP_SERVICE }).valueChanges.pipe(
+    //     map(({ data }) => {
+    //       this.user = data.myUser;
+    //       this.currentWorker$.next(this.user.worker);
+    //       return this.user;
+    //     }),
+    //     share()
+    //   );
   }
 
-  setAll(permissions: any) {
-    // Map complex structure from back to plain list of permissions
-    const permissionsMap = permissions;
-
-    const permissionsClient: string[] = [
-      ...permissionsMap.client.global.map((el: Permission) => `client-global-${el.codename}`)
-    ];
-
-    const permissionsSegmentGlobal: string[] = [
-      ...permissionsMap.segment.global.map((el: Permission) => `segment-global-${el.codename}`)
-    ];
-
-    const permissionsSegmentGlobalPerObject: string[] = [
-      ...permissionsMap.segment.perObject.map(
-        (el: Permission) => `segment-perobject-${el.objectId}-${el.codename}`
-      )
-    ];
-
-    const allPermissions = [
-      ...permissionsClient,
-      ...permissionsSegmentGlobal,
-      ...permissionsSegmentGlobalPerObject
-    ];
-
-    this.permissionsService.loadPermissions(allPermissions);
+  updateUser$(worker): Observable<IWorker> {
+    return this.updateUserGQL
+      .mutate({
+        id: this.user.worker.id,
+        name: worker.name,
+        surnames: worker.surnames,
+        email: worker.email,
+      })
+      .pipe(
+        map(({ data }) => {
+          return data.createOrUpdateWorker;
+        }),
+        tap((workerInfo) => this.currentWorker$.next(workerInfo))
+      );
   }
 }

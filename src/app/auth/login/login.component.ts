@@ -7,7 +7,7 @@ import { NB_AUTH_OPTIONS, NbAuthService, NbAuthResult } from '@nebular/auth';
 @Component({
   selector: 'ngx-login',
   templateUrl: './login.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecLoginComponent {
   redirectDelay: number = 0;
@@ -38,8 +38,6 @@ export class RecLoginComponent {
 
     this.authService.authenticate(this.strategy, this.user).subscribe((result: NbAuthResult) => {
       this.submitted = false;
-
-      debugger;
 
       if (result.isSuccess()) {
         this.messages = result.getMessages();

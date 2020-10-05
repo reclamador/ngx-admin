@@ -17,7 +17,6 @@ export class ProfileComponent implements OnDestroy {
 
   constructor(private userService: UserService) {
     this.userService.getUser$()
-      // .pipe(tap(console.log))
       .subscribe(worker => {
         this.worker = worker;
       });

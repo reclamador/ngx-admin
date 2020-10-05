@@ -1,11 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule, Injectable } from '@angular/core';
-import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
-import { HttpLink, HttpLinkModule } from 'apollo-angular-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { APOLLO_OPTIONS } from 'apollo-angular';
+import { HttpLink } from 'apollo-angular/http';
+import { InMemoryCache } from '@apollo/client/core';
 
 import { APP_DI_CONFIG } from '../app-config.module';
 
@@ -60,7 +60,7 @@ export class GQLResolver<T> implements Observer<T> {
 
 @NgModule({
   // exports: [ApolloModule, HttpLinkModule],
-  imports: [BrowserModule, HttpClientModule, ApolloModule, HttpLinkModule],
+  imports: [BrowserModule, HttpClientModule],
   providers: [
     {
       provide: APOLLO_OPTIONS,

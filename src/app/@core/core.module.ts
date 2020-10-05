@@ -21,7 +21,6 @@ import { DataModule } from './data/data.module';
 import { AnalyticsService, StateService, LayoutService } from './utils';
 import { HttpResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthGuard } from './auth-guard.service';
-import { StorageModule } from '@ngx-pwa/local-storage';
 import { GraphQLModule } from './graphql.module';
 
 @Injectable()
@@ -127,8 +126,7 @@ export const NB_CORE_PROVIDERS = [
   AuthGuard,
   AnalyticsService,
   LayoutService,
-  StateService,
-  StorageModule,
+  StateService
 ];
 
 @NgModule({
