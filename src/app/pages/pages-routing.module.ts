@@ -30,7 +30,7 @@ const routes: Routes = [
           .then(m => m.UiFeaturesModule),
       },
       {
-        path: 'modal-overlays',
+        path: 'modals',
         loadChildren: () => import('./modal-overlays/modal-overlays.module')
           .then(m => m.ModalOverlaysModule),
       },

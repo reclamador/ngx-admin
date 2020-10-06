@@ -35,6 +35,9 @@ testem.log
 /typings
 /docs
 
+.firebase/
+.firebaserc
+
 # e2e
 /e2e/*.js
 /e2e/*.map
